@@ -1,0 +1,18 @@
+adb exec-out "run-as com.example.ief.notekeeperpluralsight cat databases/NoteKeeper.db" > NoteKeeper.db
+
+sqlite3 NoteKeeper.db
+
+.tables
+
+.schema course_info
+
+.schema note_info
+
+.help
+
+select * from course_info;
+
+select * from note_info;
+
+dbbrowser for sqlite
+
