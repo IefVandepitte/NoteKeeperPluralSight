@@ -18,6 +18,7 @@ import com.example.ief.notekeeperpluralsight.NoteKeeperProviderContract.Notes;
 
 public class NoteKeeperProvider extends ContentProvider {
 
+    private String zomaar;
     private  NoteKeeperOpenHelper mDbOpenHelper;
 
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
