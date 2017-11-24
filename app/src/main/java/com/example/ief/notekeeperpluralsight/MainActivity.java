@@ -30,8 +30,11 @@ import com.example.ief.notekeeperpluralsight.NoteKeeperDatabaseContract.NoteInfo
 
 import java.util.List;
 
+import static com.example.ief.notekeeperpluralsight.NoteKeeperProviderContract.*;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_NOTES = 0;
     private NoteRecyclerAdapter mNoteRecyclerAdapter;
@@ -124,7 +127,8 @@ public class MainActivity extends AppCompatActivity
         DataManager.loadFromDatabase(mDbOpenhelper);
         mRecyclerItems = (RecyclerView) findViewById(R.id.list_items);
         mNotesLayoutManager = new LinearLayoutManager(this);
-        mCoursesLayoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.course_grid_span));
+        mCoursesLayoutManager = new GridLayoutManager(this,
+                getResources().getInteger(R.integer.course_grid_span));
 
 //        List<NoteInfo> notes = DataManager.getInstance().getNotes();
 //        mNoteRecyclerAdapter = new NoteRecyclerAdapter(this, notes);
@@ -227,28 +231,40 @@ public class MainActivity extends AppCompatActivity
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         CursorLoader loader = null;
         if (id == LOADER_NOTES){
-            loader = new CursorLoader(this){
-                @Override
-                public Cursor loadInBackground() {
-                    SQLiteDatabase db = mDbOpenhelper.getReadableDatabase();
-                    final String[] noteColumns = {
-                            NoteInfoEntry.getQName( NoteInfoEntry._ID),
-                            NoteInfoEntry.COLUMN_NOTE_TITLE,
-                            CourseInfoEntry.COLUMN_COURSE_TITLE};
+//            loader = new CursorLoader(this){
+//                @Override
+//                public Cursor loadInBackground() {
+//                    SQLiteDatabase db = mDbOpenhelper.getReadableDatabase();
 
-                    String noteOrderBy = CourseInfoEntry.COLUMN_COURSE_TITLE +
-                            "," + NoteInfoEntry.COLUMN_NOTE_TITLE;
+//                    final String[] noteColumns = {
+//                            NoteInfoEntry.getQName( NoteInfoEntry._ID),
+//                            NoteInfoEntry.COLUMN_NOTE_TITLE,
+//                            CourseInfoEntry.COLUMN_COURSE_TITLE};
+
+            final String[] noteColumns = {
+                    Notes._ID,
+                    Notes.COLUMN_NOTE_TITLE,
+                    Notes.COLUMN_COURSE_TITLE};
+
+//                    final String noteOrderBy = CourseInfoEntry.COLUMN_COURSE_TITLE +
+//                            "," + NoteInfoEntry.COLUMN_NOTE_TITLE;
+
+            final String noteOrderBy = Notes.COLUMN_COURSE_TITLE +
+                    "," + Notes.COLUMN_NOTE_TITLE;
+
+                    loader = new CursorLoader(this, Notes.CONTENT_EXPANDED_URI, noteColumns,
+                           null,null, noteOrderBy );
 
                     // note_info JOIN course_info ON note_info.course_id = course_info.course_id
-                    String tablesWithJoin = NoteInfoEntry.TABLE_NAME + " JOIN " +
-                            CourseInfoEntry.TABLE_NAME + " ON " +
-                            NoteInfoEntry.getQName(NoteInfoEntry.COLUMN_COURSE_ID) + " = " +
-                            CourseInfoEntry.getQName(CourseInfoEntry.COLUMN_COURSE_ID);
-
-                    return db.query(tablesWithJoin, noteColumns,
-                                    null, null, null, null, noteOrderBy);
-                }
-            };
+//                    String tablesWithJoin = NoteInfoEntry.TABLE_NAME + " JOIN " +
+//                            CourseInfoEntry.TABLE_NAME + " ON " +
+//                            NoteInfoEntry.getQName(NoteInfoEntry.COLUMN_COURSE_ID) + " = " +
+//                            CourseInfoEntry.getQName(CourseInfoEntry.COLUMN_COURSE_ID);
+//
+//                    return db.query(tablesWithJoin, noteColumns,
+//                                    null, null, null, null, noteOrderBy);
+//                }
+//            };
         }
         return loader;
     }
